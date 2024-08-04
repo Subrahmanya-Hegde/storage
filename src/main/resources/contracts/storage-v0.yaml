@@ -1,0 +1,75 @@
+openapi: 3.0.3
+info:
+  title: Storage Service
+  version: 0.0.1
+  description: This service provides capability to upload and download the files.
+  contact:
+    name: Subrahmanya-Hegde
+    url: https://github.com/Subrahmanya-Hegde
+    email: test@email.com
+servers:
+  - url: http://localhost:8080
+    description: Sample project running locally
+x-controller-name: StorageController
+
+paths:
+  /v0/storage:
+    post:
+      operationId: uploadDocument
+      summary: Upload Document
+      description: API which accepts any document as input and stores it in the system.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FileUploadResponse"
+      security:
+        - UserIDHeader: []
+      parameters:
+        - name: X-USER-ID
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "123456"
+
+components:
+  schemas:
+    FileUploadResponse:
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: Name of the uploaded file
+          example: "document.pdf"
+        fileSize:
+          type: string
+          description: Size of the uploaded file
+          example: "2.5 MB"
+        fileFormat:
+          type: string
+          description: Format of the uploaded file
+          example: "PDF"
+        storageLink:
+          type: string
+          description: Link to access the stored file
+          example: "https://storage.example.com/documents/document.pdf"
+  securitySchemes:
+    UserIDHeader:
+      type: apiKey
+      in: header
+      name: X-USER-ID
